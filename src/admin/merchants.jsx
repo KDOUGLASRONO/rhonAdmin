@@ -5,18 +5,25 @@ import Details from './merchantDetail'
 
 
 function Merchants(){
+    const[rhonMerchants, setRhonMerchnants] = useState("");
     const[merchants, setMerchants] = useState([]);
     const[show, setShow] = useState('hidden');
     const[activeMerchant, setActiveMerchant] = useState({});
     const[activeId, setActiveId] = useState("");
 
+    let merchantsApi = "http://localhost:4444/api/v1/merchants"
+    const merchantsRhon = "https://api.rhonpesa.online/api/v1/merchants"
+
     useEffect(()=>{
         const fetchData = async()=>{
-            await axios.get("https://deft-platypus-4a618f.netlify.app/api/v1/merchants")
-            .then(response=>{
-                console.log("memo response:", response.data);
-                setMerchants(response.data.reverse());
-            })
+            await axios.all([axios.get(merchantsApi),axios.get(merchantsRhon)])
+            .then(
+                axios.spread((...responses)=>{
+                   setMerchants(responses[0].data);
+                   setRhonMerchnants(responses[1].data.reverse()); 
+                   console.log("server response:", responses[1].data);
+                })
+            )
             .catch(err=>console.log("error:", err));
         }
         fetchData();
@@ -24,7 +31,7 @@ function Merchants(){
     }, [])
 
     const handleClick = (e)=>{
-      merchants.map((item)=>{
+      (merchants.concat(rhonMerchants)).map((item)=>{
         if(item._id==e.target.id){
           console.log("comparison:", item._id, "!=", e.target.id);
           setActiveMerchant(item)
@@ -49,7 +56,7 @@ function Merchants(){
                 </thead>
                 <tbody className='w-full'>
                     {
-                        merchants.map((item)=>{
+                        (merchants.concat(rhonMerchants)).map((item)=>{
                             return(
                                 (item.isApproved)?
                                     <tr key={item._id} className='w-full flex py-2 px-2 my-1 bg-white text-center justify-between hover:bg-slate-100 cursor-pointer'>

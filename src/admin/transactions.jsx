@@ -2,23 +2,31 @@ import{useState, useEffect, useMemo} from 'react'
 import axios from 'axios'
 import {useTable} from 'react-table'
 
+const transactionsApi = "https://api.rhonpesa.online/api/v1/transactions"
+const localTransactionsApi = "http://localhost:4444/api/v1/transactions"
+
 
 function Transactions(){
     const[transactions, setTransactions] = useState([]);
+    const[localTransactions, setLocalTransactions] = useState([]);
+
     useEffect(()=>{
         const fetchData = async()=>{
-            await axios.get("https://api.rhonpesa.online/api/v1/transactions")
-            .then(response=>{
-                console.log("memo response:", response.data);
-                setTransactions(response.data);
-            })
+            await axios.all([axios.get(transactionsApi), axios.get(localTransactionsApi)])
+            .then(
+              axios.spread((...responses)=>{
+                setTransactions(responses[0].data);
+                console.log("local transactions: ", responses[1].data);
+                setLocalTransactions(responses[1].data);
+              })
+            )
             .catch(err=>console.log("error:", err));
         }
         fetchData();
        
     }, [])
 
-    const data = useMemo(() => transactions, [transactions]);
+    const data = useMemo(() => transactions.concat(localTransactions).sort((a,b)=>(a.updatedAt<b.updatedAt)?1:-1), [transactions]);
     const columns = useMemo(
       () => [
         {
@@ -29,6 +37,7 @@ function Transactions(){
           Header: "Merchant code",
           accessor: "merchant.account_number",
         },
+        /*
         {
           Header: "Merchant phone number",
           accessor: "customer_phone",
@@ -41,6 +50,7 @@ function Transactions(){
             Header: "Phone number",
             accessor: "merchant.phone",
           },
+          */
           {
             Header:"Amount",
             accessor:"amount"

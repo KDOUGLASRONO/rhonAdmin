@@ -3,19 +3,24 @@ import axios from "axios"
 import {useTable} from 'react-table'
 
 
+const withdrawalsApi = "https://api.rhonpesa.online/api/v1/withdrawals"
+const localWithdrawalsApi = "http://localhost:4444/api/v1/withdrawals"
 
 function Withdrawals(){
     const [withdrawals, setWithdrawals] = useState([]);
+    const [localWithdrawals, setLocalWithdrawals] = useState([])
     const [error, setError] = useState("");
 
     useEffect(()=>{
 
         const getWithdrawals = async()=>{
-            axios.get("https://api.rhonpesa.online/api/v1/withdrawals")
-            .then((response)=>{
-                setWithdrawals(response.data);
-                console.log("response:",response.data);
-            })
+            axios.all([axios.get(withdrawalsApi),axios.get(localWithdrawalsApi)])
+            .then(
+              axios.spread((...responses)=>{
+                setWithdrawals(responses[0].data);
+                setLocalWithdrawals(responses[1].data);
+              })
+            )
             .catch((error)=>{
                 console.log("error:",error);
                 setError("something went wrong");
@@ -24,7 +29,7 @@ function Withdrawals(){
         getWithdrawals();
     },[])
 
-    const data = useMemo(() => withdrawals, [withdrawals]);
+    const data = useMemo(() => localWithdrawals.concat(withdrawals), [withdrawals]);
     const columns = useMemo(
       () => [
         {
@@ -34,7 +39,7 @@ function Withdrawals(){
         {
           Header: "Amount",
           accessor: "amount",
-        },
+        },/*
         {
           Header: "client phone",
           accessor: "merchant.phone",
@@ -50,7 +55,7 @@ function Withdrawals(){
           {
             Header:"status",
             accessor:"status"
-          },
+          },*/
           {
             Header:"Date",
             accessor:"createdAt"

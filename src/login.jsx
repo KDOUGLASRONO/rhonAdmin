@@ -33,7 +33,7 @@ function Login(){
     }
 
     return(
-        <div className="w-full md:w-4/12 my-20 m-auto bg-lime-100 py-10 px-2 md:px-12 rounded-lg">
+        <div className="w-full md:w-4/12 my-20 m-auto bg-violet-100 py-10 px-2 md:px-12 rounded-lg">
             <div className='text-center'>
                 <h3 className="text-red-600 text-xl">{error}</h3>
             </div>

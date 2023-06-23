@@ -53,13 +53,13 @@ function Layout(){
 
     return(
    
-        <div className="h-screen bg-slate-200">
-            <div className="flex justify-between py-6 px-4 bg-lime-50 font-bold text-2xl">
-                <h3>Rhon Finance</h3>
+        <div className="h-screen">
+            <div className="flex justify-between py-6 px-4 bg-slate-300 font-bold text-2xl">
+                <h3>Rhon</h3>
                 <button className="bg-red-700 py-1 px-2 rounded-lg text-white" onClick={handleLogout}>Log out</button>
             </div>
             <div className="flex h-5/6">
-                <div className="hidden md:block md:w-3/12 bg-lime-50 px-4 pt-6">
+                <div className="hidden md:block md:w-3/12 bg-violet-200 px-4 pt-6">
                     <Link to="/dashboard" className="my-2 flex bg-slate-200 hover:bg-slate-300 py-1 rounded-lg w-full text-xl">
                         <img src="https://img.icons8.com/sf-ultralight-filled/25/doughnut-chart.png" alt="doughnut-chart" className="h-8 mr-2"/>
                         <h3>Dashboard</h3>
@@ -93,7 +93,7 @@ function Layout(){
                         <h3>Bills</h3>
                     </Link>
                 </div>
-                <div className="w-full overflow-y-auto">
+                <div className="w-full bg-violet-50 overflow-y-auto">
                     <dataContext.Provider value={[datas,setDatas]}>
                         <Outlet/>
                     </dataContext.Provider>
