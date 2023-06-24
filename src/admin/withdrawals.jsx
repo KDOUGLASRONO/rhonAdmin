@@ -5,7 +5,7 @@ import baseURL from '../baseURL'
 
 
 const withdrawalsApi = "https://api.rhonpesa.online/api/v1/withdrawals"
-const localWithdrawalsApi = `${baseURL}/api/v1/withdrawals`
+// const localWithdrawalsApi = `${baseURL}/api/v1/withdrawals`
 
 function Withdrawals(){
     const [withdrawals, setWithdrawals] = useState([]);
@@ -15,7 +15,7 @@ function Withdrawals(){
     useEffect(()=>{
 
         const getWithdrawals = async()=>{
-            axios.all([axios.get(withdrawalsApi),axios.get(localWithdrawalsApi)])
+            axios.all([axios.get(withdrawalsApi)])
             .then(
               axios.spread((...responses)=>{
                 setWithdrawals(responses[0].data);
