@@ -66,7 +66,7 @@ function Dashboard(){
                 <h3 className="text-4xl">
                     {
                         data.transactionAmounts.reduce((a,b)=>{
-                        return parseInt(a) + parseInt(b) + 455;
+                        return parseInt(a) + parseInt(b);
                         },0)
                     }
                 </h3>
@@ -83,7 +83,7 @@ function Dashboard(){
             <div className="py-4 px-4 text-center bg-slate-300 my-2 mx-2 rounded-lg hover:bg-slate-400">
                <h3 className="text-4xl">
                     {data.totalWithdrawn.reduce((a,b)=>{
-                            return parseInt(a) + parseInt(b) + 2010;
+                            return parseInt(a) + parseInt(b) ;
                             },0)
                     }
                 </h3>
