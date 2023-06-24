@@ -2,6 +2,7 @@ import{useState, useEffect, useMemo} from 'react'
 import axios from 'axios'
 import {useTable} from 'react-table'
 import Details from './merchantDetail'
+import baseURL from '../baseURL'
 
 
 function Merchants(){
@@ -11,7 +12,7 @@ function Merchants(){
     const[activeMerchant, setActiveMerchant] = useState({});
     const[activeId, setActiveId] = useState("");
 
-    let merchantsApi = "http://localhost:4444/api/v1/merchants"
+    let merchantsApi = `${baseURL}/api/v1/merchants`
     const merchantsRhon = "https://api.rhonpesa.online/api/v1/merchants"
 
     useEffect(()=>{

@@ -1,14 +1,14 @@
 import {useEffect, useState, useContext} from 'react'
 import axios from "axios";
 import {dataContext} from './layout'
-
+import baseURL from '../baseURL';
 
 
 const api = {
     realAnalytics:"https://api.rhonpesa.online/api/v1/analytics",
-    transactions:"http://localhost:4444/api/v1/transactions",
-    merchants:"http://localhost:4444/api/v1/merchants",
-    withdrawals:"http://localhost:4444/api/v1/withdrawals"
+    transactions:`${baseURL}/api/v1/transactions`,
+    merchants:`${baseURL}/api/v1/merchants`,
+    withdrawals:`${baseURL}/api/v1/withdrawals`
 }
 
 function Dashboard(){

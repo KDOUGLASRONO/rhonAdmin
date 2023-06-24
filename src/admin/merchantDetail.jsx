@@ -1,5 +1,7 @@
 import{useState, useEffect, useRef} from 'react'
 import axios from 'axios'
+import baseURL from '../baseURL'
+
 
 
 function Details({bills, merchant, id, close}){
@@ -29,11 +31,11 @@ function Details({bills, merchant, id, close}){
     }
 
 
-    let transactionUrl = `http://localhost:4444/api/v1/merchant-transactions/${id}`
-    let merchantBillsUrl = `http://localhost:4444/api/v1/get-merchant-bills/${id}`
-    let WithdrawalsUrl = `http://localhost:4444/api/v1/merchant-withdrawals/${id}`
-    let deductionsUrl = `http://localhost:4444/api/v1/deductions/${id}`
-    let analyticSUrl = `http://localhost:4444/api/v1/merchant-analytics/${id}`
+    let transactionUrl = `${baseURL}/api/v1/merchant-transactions/${id}`
+    let merchantBillsUrl = `${baseURL}/api/v1/get-merchant-bills/${id}`
+    let WithdrawalsUrl = `${baseURL}/api/v1/merchant-withdrawals/${id}`
+    let deductionsUrl = `${baseURL}/api/v1/deductions/${id}`
+    let analyticSUrl = `${baseURL}/api/v1/merchant-analytics/${id}`
 
     //server endpoin
 
@@ -77,14 +79,14 @@ function Details({bills, merchant, id, close}){
     //delete bill
     const handleMerchantBillDelete =(e)=>{
         console.log("bill id:", e.target.id);
-        axios.delete(`http://localhost:4444/api/v1/delete-merchant-bill/${e.target.id}`)
+        axios.delete(`${baseURL}/api/v1/delete-merchant-bill/${e.target.id}`)
         .then((response)=>console.log("data response:",response.data))
         .catch((error)=>console.log("error:",error))
     }
     //reverse erroneous deductions
     const reverseDeduction=(e)=>{
         console.log(e.target.id);
-        axios.post(`http://localhost:4444/api/v1/reverse-deduction/${e.target.id}`)
+        axios.post(`${baseURL}/api/v1/reverse-deduction/${e.target.id}`)
         .then((response)=>console.log("reverse deduction ",response))
         .catch((error)=>console.log("failed to reverse:", error))
     }

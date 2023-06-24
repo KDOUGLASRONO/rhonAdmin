@@ -1,6 +1,7 @@
 import {useState, useContext, useEffect, useMemo} from 'react'
 import { dataContext } from './layout'
 import axios from 'axios'
+import baseURL from '../baseURL'
 
 
 function Pending(){
@@ -16,7 +17,7 @@ function Pending(){
 
     const handleApprove = (e)=>{
         console.log("click event", e.currentTarget.id)
-        axios.put(`http://localhost:4444/api/v1/merchant/approve/${e.currentTarget.id}`)
+        axios.put(`${baseURL}/api/v1/merchant/approve/${e.currentTarget.id}`)
         .then((response)=>console.log("put response",response))
         .catch((error)=>console.log("error put",error))
     }
