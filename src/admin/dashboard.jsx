@@ -1,6 +1,5 @@
 import {useEffect, useState, useContext} from 'react'
 import axios from "axios";
-import {dataContext} from './layout'
 import baseURL from '../baseURL';
 
 
@@ -9,20 +8,7 @@ const api = {
 }
 
 function Dashboard(){
-    const [datas,setDatas] = useContext(dataContext)
     const [realAnalytics, setRealAnalytics] = useState({})
-    
-
-    const [data, setData] = useState({
-
-        merchants:[],
-        transactions:[],
-        withdrawals:[],
-        transactionAmounts:[],
-        totalWithdrawn:[]
-    })
-
-
 
     useEffect(()=>{
         const getData = async()=>{
