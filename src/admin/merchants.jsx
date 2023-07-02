@@ -6,25 +6,19 @@ import baseURL from '../baseURL'
 
 
 function Merchants(){
-    const[rhonMerchants, setRhonMerchnants] = useState("");
     const[merchants, setMerchants] = useState([]);
     const[show, setShow] = useState('hidden');
     const[activeMerchant, setActiveMerchant] = useState({});
     const[activeId, setActiveId] = useState("");
 
     let merchantsApi = `${baseURL}/api/v1/merchants`
-    const merchantsRhon = "https://api.rhonpesa.online/api/v1/merchants"
 
     useEffect(()=>{
         const fetchData = async()=>{
-            await axios.all([axios.get(merchantsApi),axios.get(merchantsRhon)])
-            .then(
-                axios.spread((...responses)=>{
-                   setMerchants(responses[0].data);
-                   setRhonMerchnants(responses[1].data.reverse()); 
-                   console.log("server response:", responses[1].data);
-                })
-            )
+            axios.get(merchantsApi)
+            .then((data)=>{
+                setMerchants(data.data.reverse())
+            })
             .catch(err=>console.log("error:", err));
         }
         fetchData();
@@ -32,7 +26,7 @@ function Merchants(){
     }, [])
 
     const handleClick = (e)=>{
-      (merchants.concat(rhonMerchants)).map((item)=>{
+      (merchants).map((item)=>{
         if(item._id==e.target.id){
           console.log("comparison:", item._id, "!=", e.target.id);
           setActiveMerchant(item)
@@ -57,7 +51,7 @@ function Merchants(){
                 </thead>
                 <tbody className='w-full'>
                     {
-                        (merchants.concat(rhonMerchants)).map((item)=>{
+                        merchants.map((item)=>{
                             return(
                                 (item.isApproved)?
                                     <tr key={item._id} className='w-full flex py-2 px-2 my-1 bg-white text-center justify-between hover:bg-slate-100 cursor-pointer'>

@@ -57,7 +57,7 @@ function Details({bills, merchant, id, close}){
                 //setDeductions(responses[2].data)
                 //console.log("deductions responses:", responses[2].data)
                 responses[2]?.data.map((dat)=>{
-                    setDeductions((deductions)=>[...deductions,{id:dat._id,name:dat.bill.name,amount:dat.amount, date:dat.createdAt}])
+                    setDeductions((deductions)=>[...deductions,{id:dat._id,amount:dat.amount, date:dat.createdAt}])
                 })
                 //console.log("merchnt withdrawals:", responses[3].data)
                 setMerchantWithdrawals(responses[3]?.data);
