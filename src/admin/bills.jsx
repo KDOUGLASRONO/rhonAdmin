@@ -1,6 +1,7 @@
 import {useEffect, useState, useContext} from 'react'
 import axios from 'axios'
 import AddBill from './addBills'
+import baseUrl from '../baseUrl'
 
 function Bills(){
 const[availablebills, setAvailablebills]= useState([])
@@ -9,7 +10,7 @@ const [toggle, setToggle] = useState("hidden")
 
 useEffect(()=>{
     const getBills = async()=>{
-        axios.get("http://localhost:4444/api/v1/get-all-bills")
+        axios.get(`${baseUrl}/get-all-bills`)
         .then((response)=>{
             setAvailablebills(response.data);
             console.log("bills response:", response)

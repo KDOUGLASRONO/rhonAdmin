@@ -1,26 +1,21 @@
 import {useState, useEffect, useMemo} from 'react'
 import axios from "axios"
 import {useTable} from 'react-table'
+import baseUrl from '../baseUrl'
 
-
-const withdrawalsApi = "https://api.rhonpesa.online/api/v1/withdrawals"
-const localWithdrawalsApi = "http://localhost:4444/api/v1/withdrawals"
+const withdrawalsApi = `${baseUrl}/withdrawals`
 
 function Withdrawals(){
     const [withdrawals, setWithdrawals] = useState([]);
-    const [localWithdrawals, setLocalWithdrawals] = useState([])
     const [error, setError] = useState("");
 
     useEffect(()=>{
 
         const getWithdrawals = async()=>{
-            axios.all([axios.get(withdrawalsApi),axios.get(localWithdrawalsApi)])
-            .then(
-              axios.spread((...responses)=>{
-                setWithdrawals(responses[0].data);
-                setLocalWithdrawals(responses[1].data);
-              })
-            )
+            axios.get(withdrawalsApi)
+            .then((response)=>{
+              setWithdrawals(response.data);
+            })
             .catch((error)=>{
                 console.log("error:",error);
                 setError("something went wrong");
@@ -29,7 +24,7 @@ function Withdrawals(){
         getWithdrawals();
     },[])
 
-    const data = useMemo(() => localWithdrawals.concat(withdrawals), [withdrawals]);
+    const data = useMemo(() =>withdrawals, [withdrawals]);
     const columns = useMemo(
       () => [
         {

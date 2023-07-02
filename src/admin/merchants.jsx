@@ -2,28 +2,24 @@ import{useState, useEffect, useMemo} from 'react'
 import axios from 'axios'
 import {useTable} from 'react-table'
 import Details from './merchantDetail'
+import baseUrl from '../baseUrl';
 
 
 function Merchants(){
-    const[rhonMerchants, setRhonMerchnants] = useState("");
     const[merchants, setMerchants] = useState([]);
     const[show, setShow] = useState('hidden');
     const[activeMerchant, setActiveMerchant] = useState({});
     const[activeId, setActiveId] = useState("");
 
-    let merchantsApi = "http://localhost:4444/api/v1/merchants"
-    const merchantsRhon = "https://api.rhonpesa.online/api/v1/merchants"
+    let merchantsApi = `${baseUrl}/merchants`
 
     useEffect(()=>{
         const fetchData = async()=>{
-            await axios.all([axios.get(merchantsApi),axios.get(merchantsRhon)])
-            .then(
-                axios.spread((...responses)=>{
-                   setMerchants(responses[0].data);
-                   setRhonMerchnants(responses[1].data.reverse()); 
-                   console.log("server response:", responses[1].data);
-                })
-            )
+            await axios.get(merchantsApi)
+            .then((response)=>{
+                setMerchants(response.data)
+                console.log(response.data)
+            })
             .catch(err=>console.log("error:", err));
         }
         fetchData();
@@ -31,7 +27,7 @@ function Merchants(){
     }, [])
 
     const handleClick = (e)=>{
-      (merchants.concat(rhonMerchants)).map((item)=>{
+      merchants.map((item)=>{
         if(item._id==e.target.id){
           console.log("comparison:", item._id, "!=", e.target.id);
           setActiveMerchant(item)
@@ -56,12 +52,12 @@ function Merchants(){
                 </thead>
                 <tbody className='w-full'>
                     {
-                        (merchants.concat(rhonMerchants)).map((item)=>{
+                        merchants.map((item)=>{
                             return(
                                 (item.isApproved)?
                                     <tr key={item._id} className='w-full flex py-2 px-2 my-1 bg-white text-center justify-between hover:bg-slate-100 cursor-pointer'>
                                         <td className="w-1/3">{item.business_name}</td>
-                                        <td className="w-1/3">{item.createdAt}</td>
+                                        <td className="w-1/3">{item.createdAt.substring(0,10)}</td>
                                         <td className="w-1/3">
                                             <button className="bg-green-900 py-1 px-2 rounded-lg hover:bg-green-700 text-white" id={item._id} onClick={handleClick}>details</button>
                                         </td>

@@ -1,5 +1,6 @@
 import{useState, useEffect} from 'react'
 import axios from 'axios'
+import baseUrl from '../baseUrl'
 
 
 function AddBill({bills, cancel}){
@@ -13,7 +14,7 @@ function AddBill({bills, cancel}){
         console.log("bills: ", bills);
         if((bills.map((bill)=>bill.name.toUpperCase())).indexOf(bill)<0){
             console.log("bill don't exist");
-            await axios.post("http://localhost:4444/api/v1/add-bill",{
+            await axios.post(`${baseUrl}/add-bill`,{
                 name: bill,
                 period:period,
                 amount:amount
@@ -34,7 +35,7 @@ function AddBill({bills, cancel}){
             cancel()
         }
         else{
-            setError("bill already exists")
+            setError("bill already exists");setBill("");setPeriod("");setAmount("");
             console.log("bill exist", bills[(bills.map((bill)=>bill.name.toUpperCase())).indexOf(bill)])
             cancel()
         }

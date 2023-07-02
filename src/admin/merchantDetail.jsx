@@ -1,5 +1,6 @@
 import{useState, useEffect, useRef} from 'react'
 import axios from 'axios'
+import baseUrl from '../baseUrl'
 
 
 function Details({bills, merchant, id, close}){
@@ -29,34 +30,38 @@ function Details({bills, merchant, id, close}){
     }
 
 
-    let transactionUrl = `http://localhost:4444/api/v1/merchant-transactions/${id}`
-    let merchantBillsUrl = `http://localhost:4444/api/v1/get-merchant-bills/${id}`
-    let WithdrawalsUrl = `http://localhost:4444/api/v1/merchant-withdrawals/${id}`
-    let deductionsUrl = `http://localhost:4444/api/v1/deductions/${id}`
-    let analyticSUrl = `http://localhost:4444/api/v1/merchant-analytics/${id}`
+    let transactionUrl = `${baseUrl}/merchant-transactions/${id}`
+    let merchantBillsUrl = `${baseUrl}/get-merchant-bills/${id}`
+    let WithdrawalsUrl = `${baseUrl}/merchant-withdrawals/${id}`
+    let deductionsUrl = `${baseUrl}/deductions/${id}`
+    let analyticSUrl = `${baseUrl}/merchant-analytics/${id}`
 
     //server endpoin
 
     useEffect(()=>{
+        const token = sessionStorage.getItem("token");
+        console.log("id: ",id)
         
         if(mount.current){
             console.log("running useeEffect")
         const getResponse = async()=>{
-            await axios.all([axios.get(transactionUrl), axios.get(merchantBillsUrl), axios.get(deductionsUrl),axios.get(WithdrawalsUrl), 
-                axios.get(analyticSUrl),])
+            await axios.all([axios.get(transactionUrl), axios.get(merchantBillsUrl), axios.get(deductionsUrl),axios.get(WithdrawalsUrl), axios.get(analyticSUrl)], 
+            {
+                headers:{
+                    'Authorization':`Bearer ${token}`
+                }
+            })
             .then(axios.spread((...responses)=>{
                 //console.log("responses transactions received:", responses[0].data);
-                console.log("responses transactiosn", typeof(responses[0].data),responses[0].data.data);
+                //console.log("responses transactiosn", typeof(responses[0].data),responses[0].data.data);
                 setMerchantTransactions(responses[0]?.data.data)
-                //console.log("merchant bills", responses[1].data);
+                console.log("merchant bills", responses[1].data);
                 setMerchantBills(responses[1]?.data);
 
                 //console.log("deductions responses:", responses[2].data);
                 //setDeductions(responses[2].data)
-                //console.log("deductions responses:", responses[2].data)
-                responses[2]?.data.map((dat)=>{
-                    setDeductions((deductions)=>[...deductions,{id:dat._id,name:dat.bill.name,amount:dat.amount, date:dat.createdAt}])
-                })
+                console.log("deductions responses:", responses[2].data)
+                setDeductions(responses[2].data);
                 //console.log("merchnt withdrawals:", responses[3].data)
                 setMerchantWithdrawals(responses[3]?.data);
                 //analytics
@@ -77,14 +82,14 @@ function Details({bills, merchant, id, close}){
     //delete bill
     const handleMerchantBillDelete =(e)=>{
         console.log("bill id:", e.target.id);
-        axios.delete(`http://localhost:4444/api/v1/delete-merchant-bill/${e.target.id}`)
+        axios.delete(`${baseUrl}/delete-merchant-bill/${e.target.id}`)
         .then((response)=>console.log("data response:",response.data))
         .catch((error)=>console.log("error:",error))
     }
     //reverse erroneous deductions
-    const reverseDeduction=(e)=>{
-        console.log(e.target.id);
-        axios.post(`http://localhost:4444/api/v1/reverse-deduction/${e.target.id}`)
+    const reverseDeduction=async(e)=>{
+        console.log("id",e.target.id);
+        await axios.post(`${baseUrl}/reverse-deduction/${e.target.id}`)
         .then((response)=>console.log("reverse deduction ",response))
         .catch((error)=>console.log("failed to reverse:", error))
     }
@@ -104,7 +109,7 @@ function Details({bills, merchant, id, close}){
                                     return(
                                         <div key={bill._id} className='text-left flex justify-between my-1 py-2 bg-white px-1 rounded'>
                                             <h3 className="w-1/3">{bill.bill.name}</h3>
-                                            <h3 className="w-1/3 text-center"><button className="py-1 px-2 bg-violet-400 hover:bg-violet-500 text-white rounded-lg">Reset</button></h3>
+                                            <h3 className="w-1/3 text-center"><button className="py-1 px-2 bg-violet-400        hover:bg-violet-500 text-white rounded-lg">Reset</button></h3>
                                             <h3 className="w-1/3 text-right"><button className="py-1 px-2 bg-red-400 hover:bg-red-600 rounded-lg text-white" id={bill._id} onClick={handleMerchantBillDelete}>delete</button></h3>
                                         </div>
                                     )
@@ -188,10 +193,10 @@ function Details({bills, merchant, id, close}){
                                 <table className="w-full">
                                     <thead className="w-full">
                                         <tr className="w-full flex justify-between bg-white my-1 py-1 px-2">
-                                            <td className="w-4/12">Bill name</td>
-                                            <td className="w-4/12">Amount</td>
-                                            
-                                            <td className="w-4/12">action</td>
+                                            <td className="w-3/12">Bill name</td>
+                                            <td className="w-3/12">Amount</td>
+                                            <td className="w-3/12">Date</td>
+                                            <td className="w-3/12">action</td>
                                         </tr>
                                     </thead>
                                     <tbody className="w-full">
@@ -199,9 +204,10 @@ function Details({bills, merchant, id, close}){
                                             deductions.map((deduction)=>{
                                                 return(
                                                     <tr className="w-full flex justify-between bg-white my-1" >
-                                                        <td className="w-4/12">{deduction.name}</td>
-                                                        <td className="w-4/12">{deduction.amount}</td>
-                                                        <td className="w-4/12"><button className="py-1 px-2 bg-violet-300 hover:bg-violet-500 rounded-lg " id={deduction.id} onClick={reverseDeduction}>reverse</button></td>
+                                                        <td className="w-3/12">{merchantBills.map((bill)=>(bill._id == deduction.merchant_bill)?bill.bill.name:null)}</td>
+                                                        <td className="w-3/12">{deduction.amount}</td>
+                                                        <td className='w-3/12'>{deduction.updatedAt.substring(0,4)+" - "+ deduction.updatedAt.substring(6,7) + " - "+deduction.updatedAt.substring(8,10)}</td>
+                                                        <td className="w-3/12"><button className="py-1 px-2 bg-violet-300 hover:bg-violet-500 rounded-lg " id={deduction._id} onClick={reverseDeduction}>reverse</button></td>
                                                     </tr>
                                                 )
                                             })
@@ -216,32 +222,34 @@ function Details({bills, merchant, id, close}){
                                 <span className={`${(display=="withdrawals")?"hidden":"block"}`}>+</span>
                                 <span className={`${(display=="withdrawals")?"block":"hidden"}`}>-</span>
                             </div>
-                            <table className={`w-full ${(display=="withdrawals")?"block":"hidden"}`}>
-                                <thead className="w-full">
-                                    <tr className="w-full flex justify-between bg-white my-1 py-1 px-2">
-                                        <td className="w-2/12">Amount</td>
+                            <div className={`w-full ${(display=="withdrawals")?"block":"hidden"}`}>
+                                <table className={`w-full`}>
+                                    <thead className="w-full">
+                                        <tr className="w-full flex justify-between bg-white my-1 py-1 px-2">
+                                            <td className="w-4/12">Amount</td>
+                                            
+                                            <td className="w-4/12">recipient</td>
+                                            <td className="w-4/12">status</td>
                                         
-                                        <td className="w-2/12">recipient</td>
-                                        <td className="w-2/12">status</td>
-                                       
-                                    </tr>
-                                </thead>
-                                <tbody className="w-full">
-                                    {
-                                        merchantWithdrawals.map((withdrawal)=>{
-                                            return(
-                                                <tr className="w-full flex text-center bg-white my-1" key={withdrawal._id}>
-                                                    <td className="w-4/12">{withdrawal.amount}</td>
-                                                  
-                                                    <td className="w-4/12">self</td>
-                                                    <td className="w-4/12">{withdrawal.status}</td>
-                                                   
-                                                </tr>
-                                            )
-                                        })
-                                    }
-                                </tbody>
-                            </table>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="w-full">
+                                        {
+                                            merchantWithdrawals.map((withdrawal)=>{
+                                                return(
+                                                    <tr className="w-full flex justify-between bg-white my-1" key={withdrawal._id}>
+                                                        <td className="w-4/12">{withdrawal.amount}</td>
+                                                    
+                                                        <td className="w-4/12">self</td>
+                                                        <td className="w-4/12">{withdrawal.status}</td>
+                                                    
+                                                    </tr>
+                                                )
+                                            })
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>

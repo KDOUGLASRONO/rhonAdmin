@@ -2,6 +2,7 @@ import{useState, useContext} from 'react'
 import{useNavigate, Link} from 'react-router-dom'
 import axios from "axios"
 import { loginContext } from './App';
+import baseUrl from './baseUrl';
 
 function Login(){
     const[email,setEmail] = useState("");
@@ -12,8 +13,9 @@ function Login(){
     const [logins, setLogins] = useContext(loginContext)
 
     const handleLogin =async()=>{
+        console.log("base url: " + baseUrl)
         try{
-            const response = await axios.post("http://localhost:4444/api/v1/user/login",{
+            const response = await axios.post(`${baseUrl}/user/login`,{
                 email:email,
                 password:password
             },{
@@ -21,9 +23,10 @@ function Login(){
                     "Content-Type": "application/json",
                   },
             })
-            console.log("response",response.status);
+            console.log("response",response);
             if(response.status===200){
                 setLogins(true);
+                sessionStorage.setItem('token', response.data.token);
                 Navigate("/dashboard");
             }
         }

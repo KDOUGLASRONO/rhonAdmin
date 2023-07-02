@@ -1,22 +1,29 @@
-import {useState, useContext, useEffect, useMemo} from 'react'
-import { dataContext } from './layout'
+import {useState,useEffect} from 'react'
 import axios from 'axios'
+import baseUrl from '../baseUrl'
 
 
 function Pending(){
-    const[datas,setDatas] = useContext(dataContext)
-  
-    
+   const [pendingMerchants, setPendingMerchants] = useState([]);
+   
+   let merchantsApi = `${baseUrl}/merchants`
 
     useEffect(()=>{
-        
-        console.log("usecontext datas: ",datas.merchantsData)
+        const fetchData = async()=>{
+            await axios.get(merchantsApi)
+            .then((response)=>{
+                setPendingMerchants(response.data)
+                console.log("response: " + response.data)
+            })
+            .catch(err=>console.log("error:", err));
+        }
+        fetchData();
        
     },[])
 
     const handleApprove = (e)=>{
         console.log("click event", e.currentTarget.id)
-        axios.put(`http://localhost:4444/api/v1/merchant/approve/${e.currentTarget.id}`)
+        axios.put(`${baseUrl}/merchant/approve/${e.currentTarget.id}`)
         .then((response)=>console.log("put response",response))
         .catch((error)=>console.log("error put",error))
     }
@@ -33,7 +40,7 @@ function Pending(){
                 </thead>
                 <tbody className='w-full'>
                     {
-                        datas.merchantsData.map((item)=>{
+                        pendingMerchants.map((item)=>{
                             return(
                                 (!item.isApproved)?
                                     <tr key={item._id} className='w-full flex py-2 px-2 my-1 bg-white text-center justify-between hover:bg-slate-100 cursor-pointer'>

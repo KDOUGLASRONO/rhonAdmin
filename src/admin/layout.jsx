@@ -7,11 +7,7 @@ import axios from 'axios'
 export const dataContext = createContext()
 function Layout(){
     const [logins, setLogins] = useContext(loginContext)
-    const [datas, setDatas] = useState({
-        merchantsData:[],
-        transactionsData:[],       
-        withdrawalsData:[]
-    })
+   
     const Navigate = useNavigate();
 
     const handleLogout = ()=>{
@@ -19,34 +15,8 @@ function Layout(){
         Navigate("/");
     }
 
-    const api = {
-        transactions:"https://api.rhonpesa.online/api/v1/transactions",
-        merchants:"https://api.rhonpesa.online/api/v1/merchants",
-        withdrawals:"https://api.rhonpesa.online/api/v1/withdrawals"
-    }
-
     useEffect(()=>{
         if(!logins){
-
-            const getData = async()=>{
-                axios.all([api.transactions, api.merchants, api.withdrawals])
-                .then(axios.spread((...responses)=>{
-                    const transactionsResponse = responses[0].data
-                    const merchantsResponse = responses[1].data
-                    const withdrawalsResponse = responses[2].data
-                    setData({
-                        transactionsData: transactionsResponse,
-                        merchantsData:merchantsResponse,
-                        withdrawalsData:withdrawalsResponse
-                    })
-                    console.log("checking resposne:", transactionsResponse);
-                }))
-                .catch((err)=>{
-                    console.log("error at layout axios", err);
-                })
-            }
-            getData();
-
             Navigate("/")
         }
     },[])
@@ -94,9 +64,7 @@ function Layout(){
                     </Link>
                 </div>
                 <div className="w-full bg-violet-50 overflow-y-auto">
-                    <dataContext.Provider value={[datas,setDatas]}>
                         <Outlet/>
-                    </dataContext.Provider>
                 </div>
             </div>
             <div className="bg-lime-50 font-bold flex px-4 py-4 justify-between text-xl">
