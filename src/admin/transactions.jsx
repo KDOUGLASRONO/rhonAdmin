@@ -1,10 +1,10 @@
 import{useState, useEffect, useMemo} from 'react'
 import axios from 'axios'
 import {useTable} from 'react-table'
-import baseURL from '../baseURL'
+import baseUrl from '../baseUrl'
 
 const transactionsApi = "https://api.rhonpesa.online/api/v1/transactions"
-const localTransactionsApi = `${baseURL}/api/v1/transactions`
+const localTransactionsApi = `${baseUrl}/transactions`
 
 
 function Transactions(){
